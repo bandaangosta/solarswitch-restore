@@ -7,8 +7,8 @@
 rm /tmp/backup_*.csv
 unzip $1 -d /tmp
 
-ACTIVATE=/root/csv-to-influxdb/venv/bin/activate
-TOINFLUX=/root/csv-to-influxdb/csv-to-influxdb.py
+ACTIVATE=venv/bin/activate
+TOINFLUX=csv-to-influxdb.py
 source $ACTIVATE
 
 python $TOINFLUX -i /tmp/backup_power.csv --dbname solarswitch --metricname power --tagcolumns location --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'

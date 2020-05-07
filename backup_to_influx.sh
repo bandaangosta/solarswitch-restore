@@ -17,32 +17,32 @@ source $ACTIVATE
 echo
 echo "Restoring 'power' measurement..."
 echo
-#python $TOINFLUX -i /tmp/backup_power.csv --dbname solarswitch --metricname power --tagcolumns location --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
+python $TOINFLUX -i /tmp/backup_power.csv --dbname solarswitch --metricname power --tagcolumns location --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
 
 echo
 echo "Restoring 'energy' measurement..."
 echo
-#python $TOINFLUX -i /tmp/backup_energy.csv --dbname solarswitch --metricname energy --tagcolumns location --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
+python $TOINFLUX -i /tmp/backup_energy.csv --dbname solarswitch --metricname energy --tagcolumns location --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
 
 echo
 echo "Restoring 'frequency' measurement..."
 echo
-#python $TOINFLUX -i /tmp/backup_frequency.csv --dbname solarswitch --metricname frequency --tagcolumns location --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
+python $TOINFLUX -i /tmp/backup_frequency.csv --dbname solarswitch --metricname frequency --tagcolumns location --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
 
 echo
 echo "Restoring 'powerfactor' measurement..."
 echo
-#python $TOINFLUX -i /tmp/backup_powerFactor.csv --dbname solarswitch --metricname powerFactor --tagcolumns location --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
+python $TOINFLUX -i /tmp/backup_powerFactor.csv --dbname solarswitch --metricname powerFactor --tagcolumns location --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
 
 echo
 echo "Restoring 'relays' measurement..."
 echo
-#python $TOINFLUX -i /tmp/backup_relays.csv --dbname solarswitch --metricname relays --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
+python $TOINFLUX -i /tmp/backup_relays.csv --dbname solarswitch --metricname relays --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
 
 echo
 echo "Restoring 'current' measurement..."
 echo
-#python $TOINFLUX -i /tmp/backup_current.csv --dbname solarswitch --metricname current --fieldcolumns value,value_raw --tagcolumns flow,location  --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
+python $TOINFLUX -i /tmp/backup_current.csv --dbname solarswitch --metricname current --fieldcolumns value,value_raw --tagcolumns flow,location  --timecolumn time --timeformat '%Y-%m-%dT%H:%M:%SZ'
 
 echo
 echo "Restoring 'voltage' measurement..."

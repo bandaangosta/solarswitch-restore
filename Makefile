@@ -10,5 +10,5 @@ venv:
 	venv/bin/pip install -r requirements.txt
 
 run: venv
-	backup_to_influx.sh $1
+	./backup_to_influx.sh ${zip}
 

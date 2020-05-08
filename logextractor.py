@@ -191,6 +191,8 @@ def main(path_to_log, timestamp_from, timestamp_to):
             with open(f'{_measurement}.csv', 'w') as file:
                 csv_writer = csv.writer(file)
                 csv_writer.writerow(header)
+                # Sort data by timestamp before writing to disk for improved DB insertion
+                data.sort(key = lambda y: y[1])
                 csv_writer.writerows(data)
             print(f'Wrote {_measurement}.csv')
         else:

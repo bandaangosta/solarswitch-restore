@@ -105,3 +105,5 @@ settings.cfg
 *.swp
 *.sublime-project
 
+*.csv
+*.zip

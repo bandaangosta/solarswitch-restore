@@ -30,7 +30,8 @@ import click
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 # Name of measurements to extract from logs
-MEASUREMENTS = ['current', 'voltage', 'frequency', 'energy', 'power', 'powerFactor', 'relays']
+MEASUREMENTS = ['current', 'voltage', 'frequency', 'energy', 'power', 'powerFactor']
+MEASUREMENT_RELAYS = ['relays']
 
 def convertDate(strDate):
     try:
@@ -57,17 +58,28 @@ def main(path_to_log, timestamp_from, timestamp_to):
     '''
 
     with open(path_to_log) as file:
-        data = file.read()
+        data_logs = file.read()
 
+    ## PROCESSING ALL MEASUREMENTS EXCEPT 'relays'
+
+    # Regular expression pattern used to find measurements values in solarswitch logs
+    # Used for all measurements except 'relays'
+    # It matches and returns strings like:
+    #   voltage,flow=DC,location=inverter value=0.034,value_raw=0.014 1588110508
+    #   current,flow=DC,location=solar_panel value=-1.492,value_raw=2.179 1588110508
+    #   ...
+    #
+    #   Returned strings have measurement name, tags (keys and values), fields (keys and values) and timestamp (UTC, precision in seconds)
+    #
     pattern = re.compile('(?:{}),.*'.format('|'.join(MEASUREMENTS)))
-    results = pattern.findall(data)
+    results = pattern.findall(data_logs)
 
     full_measurements = set()
     full_tags_per_measurement = dict()
     full_fields_per_measurement = dict()
 
     # First, for each measurement, extract all tags and fields
-    print('Analyzing log file to extract all measurement, tags and fields...')
+    print('Analyzing log file to extract all measurements, tags and fields...')
     for row in tqdm(results):
         dictRow = {}
         sections = row.split(' ')
@@ -89,6 +101,7 @@ def main(path_to_log, timestamp_from, timestamp_to):
         utctimestamp = datetime.utcfromtimestamp(int(sections[2])).strftime('%Y-%m-%dT%H:%M:%SZ')
         dictRow['timestamp'] = utctimestamp
 
+        # Example:
         # dictRow = {'measurement': 'voltage',
         #  'tags': {'flow': 'DC', 'location': 'control_GND'},
         #  'fields': {'value': '0.000', 'value_raw': '-0.000'},
@@ -127,6 +140,7 @@ def main(path_to_log, timestamp_from, timestamp_to):
     if len(full_measurements) == 0:
         print('No measurements found')
 
+    # Extract rows of data and reformat it for CSV file
     for _measurement in sorted(full_measurements):
         print(f"Processing measurement {_measurement} and generating CSV file...")
 
@@ -160,6 +174,7 @@ def main(path_to_log, timestamp_from, timestamp_to):
             utctimestamp = datetime.utcfromtimestamp(int(sections[2])).strftime('%Y-%m-%dT%H:%M:%SZ')
             dictRow['timestamp'] = utctimestamp
 
+            # Example:
             # dictRow = {'measurement': 'voltage',
             #  'tags': {'flow': 'DC', 'location': 'control_GND'},
             #  'fields': {'value': '0.000', 'value_raw': '-0.000'},
@@ -197,6 +212,62 @@ def main(path_to_log, timestamp_from, timestamp_to):
             print(f'Wrote backup_{_measurement}.csv')
         else:
             print(f'No data to write for measurement {_measurement}')
+
+
+    ## PROCESSING 'relays' MEASUREMENTS ONLY
+
+    # Regular expression pattern for 'relays' measurements only
+    # It matches and returns strings like:
+    #   relays value=3227 1588446863
+    #
+    #   Returned strings have "relays" measurement name, one field ("value") and timestamp (UTC, precision in seconds)
+    #
+    pattern = re.compile('relays value.*')
+    results = pattern.findall(data_logs)
+
+    # Extract rows of data and reformat it for CSV file
+    for _measurement in ['relays']:
+        print(f"Processing measurement {_measurement} and generating CSV file...")
+
+        data = []
+        header = ['name', 'time', 'value']
+
+        for row in tqdm(results):
+            sections = row.split(' ')
+            measurement = sections[0]
+
+            if measurement != _measurement:
+                continue
+
+            value = sections[1].split('=')[1]
+
+            utctimestamp = datetime.utcfromtimestamp(int(sections[2])).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+            # Ignore rows outside required minimum time range, if defined
+            if timestamp_from:
+                conv_timestamp_from = convertDate(timestamp_from)
+                if not datetime.utcfromtimestamp(int(sections[2])) > conv_timestamp_from:
+                    continue
+
+            # Ignore rows outside required maximum time range, if defined
+            if timestamp_to:
+                conv_timestamp_to = convertDate(timestamp_to)
+                if not datetime.utcfromtimestamp(int(sections[2])) < conv_timestamp_to:
+                    continue
+
+            data.append([measurement, utctimestamp, value])
+
+        if len(data) > 0:
+            with open(f'backup_{_measurement}.csv', 'w') as file:
+                csv_writer = csv.writer(file)
+                csv_writer.writerow(header)
+                # Sort data by timestamp before writing to disk for improved DB insertion
+                data.sort(key = lambda y: y[1])
+                csv_writer.writerows(data)
+            print(f'Wrote backup_{_measurement}.csv')
+        else:
+            print(f'No data to write for measurement {_measurement}')
+
 
 if __name__ == '__main__':
     sys.exit(main())

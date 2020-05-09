@@ -17,7 +17,7 @@ Steps:
  3. To execute database restoring, run `make run zip=<path to zip file>`  
     Replace `<path to zip file>` with full path to zipped file containing CSV data files. For example:
 
-    make run zip=/tmp/backup_recovered.zip 
+        $ make run zip=/tmp/backup_recovered.zip 
 
 ### Log analysis and database reconstruction tool
 

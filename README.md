@@ -19,6 +19,8 @@ Steps:
 
         $ make run zip=/tmp/backup_recovered.zip 
 
+![Screenshot](img/make_run.png)
+
 ### Log analysis and database reconstruction tool
 
 This tool processes SolarSwitch prototype system logs to extract data measurements to InfluxDB-compatible CSV files.
@@ -48,6 +50,8 @@ Usage is as follows:
 Example:
 
         $ ./logextractor.py /data/logs/solarswitch.log
+
+![Screenshot](img/logextractor.png)
 
 Limiting time range of logs analysis:
 

@@ -8,17 +8,17 @@ This repository is part of the [SolarSwitch prototype](https://twitter.com/banda
 
 ### Database restore
 
-This tool takes a zipped file containing CSV-formatted data files, as needed by InfluxDB `solarswitch` database, and restores data to such database. This also allows to keep copies of main database in sync for cloud visualization, for example.   
+This tool takes a zipped file containing CSV-formatted data files, as needed by InfluxDB `solarswitch` database, and restores data to such database. This also allows to keep copies of main database in sync for cloud visualization, for example.
 Only new data will be inserted. Existing datapoints will be unaffected. `solarswitch` database must already exist.
 
 Steps:
 
  1. Clone repository to host machine where database will be restored.
  2. In repository directory, run `make venv` to setup needed libraries.
- 3. To execute database restoring, run `make run zip=<path to zip file>`  
+ 3. To execute database restoring, run `make run zip=<path to zip file>`
     Replace `<path to zip file>` with full path to zipped file containing CSV data files. For example:
 
-        $ make run zip=/tmp/backup_recovered.zip 
+        $ make run zip=/tmp/backup_recovered.zip
 
 ![Screenshot](img/make_run.png)
 
@@ -36,7 +36,7 @@ Usage is as follows:
       InfluxDB-compatible CSV files.
 
       Path to log file is required as argument. Typically, log file is named
-      /data/logs/solarwitch.log or similar.'
+      /data/logs/solarwitch.log or similar.
 
     Options:
       -s, --timestamp_from TEXT  (optional) Limit log extraction to start from
